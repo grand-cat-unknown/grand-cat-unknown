@@ -20,7 +20,13 @@ function draw() {
 
   // Shift all elements 1 place to the left
   for ( let i = 1; i < num; i++ ) {
+
+
+
     ax[i - 1] = ax[i];
+
+
+
     ay[i - 1] = ay[i];
   }
 
