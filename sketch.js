@@ -6,8 +6,8 @@ let board;
 let next;
 
 function setup() {
-  createCanvas(1080, 2000);
-  w = 5;
+  createCanvas(2000, 4000);
+  w = 15;
   // Calculate columns and rows
   columns = floor(width / w);
   rows = floor(height / w);
