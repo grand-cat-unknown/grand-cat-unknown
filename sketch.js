@@ -12,7 +12,7 @@ function setup() {
     ax[i] = width / 2;
     ay[i] = height / 2;
   }
-  frameRate(30);
+  frameRate(60);
 }
 
 function draw() {
@@ -20,13 +20,7 @@ function draw() {
 
   // Shift all elements 1 place to the left
   for ( let i = 1; i < num; i++ ) {
-
-
-
     ax[i - 1] = ax[i];
-
-
-
     ay[i - 1] = ay[i];
   }
 
