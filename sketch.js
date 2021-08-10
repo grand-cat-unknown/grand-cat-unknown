@@ -1,41 +1,115 @@
+// 8 nights of Hanukkah 2016 Examples
+// Night 7: Animated Circle Packing
+// Expansion of: https://youtu.be/XATr_jdh-44
+// Daniel Shiffman
+// http://codingrainbow.com/
 
-let num = 2000;
-let range = 6;
-
-let ax = [];
-let ay = [];
-
+// All the circles
+var circles = [];
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  for ( let i = 0; i < num; i++ ) {
-    ax[i] = width / 2;
-    ay[i] = height / 2;
-  }
-  frameRate(60);
+  // Start with a big one in the center in the hopes that it
+  // takes up a lot of a space and the sketch runs faster
+  circles.push(new Circle(width / 2, height / 2, min(width, height) / 3));
 }
 
 function draw() {
-  background(51);
+  background(0);
 
-  // Shift all elements 1 place to the left
-  for ( let i = 1; i < num; i++ ) {
-    ax[i - 1] = ax[i];
-    ay[i - 1] = ay[i];
+  // All the circles
+  for (var i = 0; i < circles.length; i++) {
+    var c = circles[i];
+    c.show();
+
+    // Is it a growing one?
+    if (c.growing) {
+      c.grow();
+      // Does it overlap any previous circles?
+      for (var j = 0; j < circles.length; j++) {
+        var other = circles[j];
+        if (other != c) {
+          var d = dist(c.x, c.y, other.x, other.y);
+          if (d - 1 < c.r + other.r) {
+            c.growing = false;
+          }
+        }
+      }
+
+      // Is it stuck to an edge?
+      if (c.growing) {
+        c.growing = !c.edges();
+      }
+    }
   }
 
-  // Put a new value at the end of the array
-  ax[num - 1] += random(-range, range);
-  ay[num - 1] += random(-range, range);
-
-  // Constrain all points to the screen
-  ax[num - 1] = constrain(ax[num - 1], 0, width);
-  ay[num - 1] = constrain(ay[num - 1], 0, height);
-
-  // Draw a line connecting the points
-  for ( let j = 1; j < num; j++ ) {
-    let val = j / num * 204.0 + 51;
-    stroke(val);
-    line(ax[j - 1], ay[j - 1], ax[j], ay[j]);
+  // Let's try to make a certain number of new circles each frame
+  // More later
+  var target = 1 + constrain(floor(frameCount / 120), 0, 20);
+  // How many
+  var count = 0;
+  // Try N times
+  for (var i = 0; i < 1000; i++) {
+    if (addCircle()) {
+      count++;
+    }
+    // We made enough
+    if (count == target) {
+      break;
+    }
   }
+
+  // We can't make any more
+  if (count < 1) {
+    noLoop();
+    console.log("finished");
+  }
+}
+
+// Add one circle
+function addCircle() {
+  // Here's a new circle
+  var newCircle = new Circle(random(width), random(height), 1);
+  // Is it in an ok spot?
+  for (var i = 0; i < circles.length; i++) {
+    var other = circles[i];
+    var d = dist(newCircle.x, newCircle.y, other.x, other.y);
+    if (d < other.r + 4) {
+      newCircle = undefined;
+      break;
+    }
+  }
+  // If it is, add it
+  if (newCircle) {
+    circles.push(newCircle);
+    return true;
+  } else {
+    return false;
+  }
+}
+
+// Circle object
+function Circle(x, y, r) {
+  this.growing = true;
+  this.x = x;
+  this.y = y;
+  this.r = r;
+}
+
+// Check stuck to an edge
+Circle.prototype.edges = function() {
+  return (this.r > width - this.x || this.r > this.x || this.r > height - this.y || this.r > this.y);
+}
+
+// Grow
+Circle.prototype.grow = function() {
+  this.r += 0.5;
+}
+
+// Show
+Circle.prototype.show = function() {
+  noFill();
+  strokeWeight(1.5);
+  stroke(255, 0, 175, 225);
+  ellipse(this.x, this.y, this.r * 2);
 }
