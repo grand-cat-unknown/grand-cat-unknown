@@ -6,12 +6,13 @@
 
 // All the circles
 var circles = [];
+var offset = 0;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
   // Start with a big one in the center in the hopes that it
   // takes up a lot of a space and the sketch runs faster
-  circles.push(new Circle(width / 2, height / 2, min(width, height) / 3));
+  circles.push(new Circle(0, height / 2, min(width, height) / 3));
 }
 
 function draw() {
@@ -106,10 +107,12 @@ Circle.prototype.grow = function() {
   this.r += 0.5;
 }
 
-// Show
+// Show\
 Circle.prototype.show = function() {
   noFill();
   strokeWeight(1.5);
-  stroke(255, 0, 175, 225);
+  stroke(255, offset, 175, 225);
+  offset += 1;
+  console.log(offset);
   ellipse(this.x, this.y, this.r * 2);
 }
